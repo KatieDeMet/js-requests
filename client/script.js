@@ -2,6 +2,10 @@
 //THE TEST SERVER IS RUNNING ON LOCALHOST:3000//
 ////////////////////////////////////////////////
 
+
+
+// const { default: axios } = require("axios");
+
 // PROBLEM 1
 /*
     In the index.html file in this folder there is a button with an id of 'say-hello-button'!
@@ -9,7 +13,7 @@
     Use querySelector to select that button and save it to a variable called sayHelloButton
 */
 
-// CODE HERE
+const sayHelloButton = document.querySelector('#say-hello-button');
 
 
 // PROBLEM 2
@@ -19,7 +23,11 @@
     Attach a mouseover event to sayHelloButton that calls the function you wrote
 */
 
-// CODE HERE
+function changeColor() {
+    sayHelloButton.style.backgroundColor = 'black'
+    sayHelloButton.style.color = 'white'
+}
+sayHelloButton.addEventListener('mouseover', changeColor)
 
 
 // PROBLEM 3
@@ -31,7 +39,11 @@
     Attach another listener that fires your second function when the mouseout event occurs on the button
 */
 
-// CODE HERE
+function changeColorBack() {
+    sayHelloButton.style.backgroundColor = '#EFEFEF'
+    sayHelloButton.style.color = 'black'
+}
+sayHelloButton.addEventListener('mouseout', changeColorBack)
 
 
 // PROBLEM 4
@@ -52,7 +64,7 @@ const sayHello = () => {
 }
 // DO NOT EDIT FUNCTION
 
-// CODE HERE
+sayHelloButton.addEventListener('click', sayHello)
 
 
 // PROBLEM 5 
@@ -66,11 +78,16 @@ const sayHello = () => {
     Handle the promise that's returned with a .then, which you should pass a callback function to. Inside the callback function, console.log the response's data (in the intermediate instructions we'll come back to this function and add HTML).
 */ 
 
-const ohMy = () => {
-    // YOUR CODE HERE
-}
+// const ohMy = () => {
+//     axios.get('http://localhost:3000/animals').then((res) => {
+//         console.log(res.data);
+// })
+// .catch(err => {
+//     console.log(err);
+// })
+// }
 
-document.getElementById('animals-button').addEventListener('click', ohMy)
+// document.getElementById('animals-button').addEventListener('click', ohMy)
 
 
 // PROBLEM 6 
@@ -87,8 +104,15 @@ document.getElementById('animals-button').addEventListener('click', ohMy)
 */
 
 const repeatMyParam = () => {
-    //YOUR CODE HERE
+    axios.get('http://localhost:3000/repeat/ICECREAM!')
+      .then(res => {
+        //console.log(res.data)
+        document.querySelector('#repeat-text').style.display = 'block';
+        document.querySelector('#repeat-text').textContent = res.data
+        
+    })
 }
+document.querySelector('#repeat-button').addEventListener('click', repeatMyParam)
 
 // PROBLEM 7
 /*
@@ -110,7 +134,17 @@ const repeatMyParam = () => {
     Outside of your new function, select the button with the id "query-button" and add a click event listener that calls your function.
 */
 
-// CODE HERE
+// const query = _ => {
+//     axios.get('http://localhost:3000/query-test?color=white')
+//       .then(res => {
+//         console.log(res.data)
+//       })
+//       .catch(err => {
+//           console.log(err)
+//       })
+// }
+
+// document.querySelector('#query-button').addEventListener('click', query)
 
 
 
@@ -126,17 +160,47 @@ const repeatMyParam = () => {
 */
 
 // Code in the ohMy function in Problem 5
+const ohMy = () => {
+    axios.get('http://localhost:3000/animals').then((res) => {
+        for(let i = 0; i < res.data.length; i++) {
+            let newParagraph = document.createElement('p');
+            newParagraph.textContent = res.data[i];
+            //document.body.appendChild(newParagraph);
+            document.querySelector('body').appendChild(newParagraph);
+            //console.log(res.data);
+        }    
+    
+})
+.catch(err => {
+    console.log(err);
+})
+}
+
+document.getElementById('animals-button').addEventListener('click', ohMy)
 
 // PROBLEM 10 
 /*
     In the function that you wrote for Problem 8, change the URL to test a couple different scenarios. 
 
     1: Send no queries on the URL -- what happened? 
-
+    // It sent the message "You sent an empty query!" (Activated if statement, not an error)
     2: Send more than 1 query on the URL -- what happened? 
-*/
+    // It sent back an object with multiple messages and our queries
+    */
 
 // Edit code in Problem 8
+const query = _ => {
+    axios.get('http://localhost:3000/query-test?color=white&up=true')
+      .then(res => {
+        console.log(res.data)
+        
+      })
+      .catch(err => {
+          console.log(err)
+      })
+}
+
+document.querySelector('#query-button').addEventListener('click', query)
 
 
 
@@ -163,4 +227,22 @@ const repeatMyParam = () => {
     Based on what we did earlier to display this type of data, write code that will display the response in your HTML document. 
 */
 
-// CODE HERE 
+function createFood(event) {
+    event.preventDefault()
+    foodInput = document.querySelector('input')
+    console.log(foodInput.value)
+    let body = {
+        newFood: foodInput.value
+    }
+    axios.post('http://localhost:3000/food', body) 
+      .then(res => {
+          console.log(res)
+          let anotherParagraph = document.createElement('p');
+          anotherParagraph.textContent = res.data;
+          document.querySelector('body').appendChild(anotherParagraph)
+      })
+      .catch(err => {
+          console.log(err)
+      })
+}
+document.querySelector('#food-form').addEventListener('submit', createFood)
